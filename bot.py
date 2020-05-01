@@ -88,14 +88,62 @@ async def volume(ctx, volume: int):
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, url: str):
     """Включить песню (.play youtubeURL)"""
+    
+    def check_queue():
+        Queue_infile = os.path.isdir("./Queue")
+        if Queue_infile is True:
+            DIR = os.path.abspath(os.path.realpath("Queue"))
+            length = len(os.listdir(DIR))
+            still_q = length - 1
+            try:
+                first_file = os.listdir(DIR)[0]
+            except:
+                print("No more queued song(s)\n")
+                queues.clear()
+                return
+            main_location = os.path.dirname(os.path.realpath(__file__))
+            song_path = os.path.abspath(os.path.realpath("Queue") + "\\" + first_file)
+            if length != 0:
+                print("Song done, playing next queued\n")
+                print(f"Songs still in queue: {still_q}")
+                song_there = os.path.isfile("song.mp3")
+                if song_there:
+                    os.remove("song.mp3")
+                shutil.move(song_path, main_location)
+                for file in os.listdir("./"):
+                    if file.endswith(".mp3"):
+                        os.rename(file, 'song.mp3')
+
+                voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: check_queue())
+                voice.source = discord.PCMVolumeTransformer(voice.source)
+                voice.source.volume = 0.07
+
+            else:
+                queues.clear()
+                return
+
+        else:
+            queues.clear()
+            print("очередь пуста\n")
+    
+    
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
             os.remove("song.mp3")
+            queues.clear()
     except PermissionError:
         print("ERROR: Что-то играет")
         await ctx.send("ERROR: Что-то играет")
         return
+    
+    Queue_infile = os.path.isdir("./Queue")
+    try:
+        Queue_folder = "./Queue"
+        if Queue_infile is True:
+            shutil.rmtree(Queue_folder)
+    except:
+        print("error")
 
     await ctx.send("Начинаю загрузку...")
 
@@ -103,6 +151,51 @@ async def play(ctx, url: str):
 
     ydl_opts = {
         'format': 'bestaudio/best',
+        'quiet': False,
+        'outtmpl': "./song.mp3",
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+    
+    song_search = " ".join(url)
+
+    try:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([f"ytsearch1:{song_search}"])
+    except:
+        c_path = os.path.dirname(os.path.realpath(__file__))
+        system("spotdl -ff song -f " + '"' + c_path + '"' + " -s " + song_search)
+
+    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("выполнено"))
+    voice.source = discord.PCMVolumeTransformer(voice.source)
+    voice.source.volume = 0.07
+    
+    
+@bot.command(pass_context=True, aliases=['q', 'que'])
+async def queue(ctx, *url: str):
+    Queue_infile = os.path.isdir("./Queue")
+    if Queue_infile is False:
+        os.mkdir("Queue")
+    DIR = os.path.abspath(os.path.realpath("Queue"))
+    q_num = len(os.listdir(DIR))
+    q_num += 1
+    add_queue = True
+    while add_queue:
+        if q_num in queues:
+            q_num += 1
+        else:
+            add_queue = False
+            queues[q_num] = q_num
+
+    queue_path = os.path.abspath(os.path.realpath("Queue") + f"\song{q_num}.%(ext)s")
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'quiet': True,
+        'outtmpl': queue_path,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -110,21 +203,16 @@ async def play(ctx, url: str):
         }],
     }
 
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+    song_search = " ".join(url)
+    try:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([f"ytsearch1:{song_search}"])
+    except:
+        q_path = os.path.abspath(os.path.realpath("Queue"))
+        system(f"spotdl -ff song{q_num} -f " + '"' + q_path + '"' + " -s " + song_search)
 
-        
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            name = file
-            os.rename(file, "song.mp3")
-
-    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("выполнено"))
-    voice.source = discord.PCMVolumeTransformer(voice.source)
-    voice.source.volume = 0.07
-
-    nname = name.rsplit("-", 2)
-    await ctx.send(f"Сейчас проигрывается: {nname[0]}")
+    await ctx.send("Добавление " + str(q_num) + " в очередь")
+    print("Добавлено в очередь\n")
 
 
 b_token = os.environ.get('TOKEN')
