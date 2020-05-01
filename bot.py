@@ -39,6 +39,34 @@ async def leave(ctx):
     else:
         print("Бот не находится в голосовом канале")
         await ctx.send("Бот не находится в голосовом канале")
+        
+        
+@bot.command(pass_context=True, aliases=['pa', 'pau'])
+async def pause(ctx):
+
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_playing():
+        print("Пауза")
+        voice.pause()
+        await ctx.send("пауза")
+    else:
+        print("нечего ставить на паузу")
+        await ctx.send("Нечего ставить на паузу")
+
+
+@bot.command(pass_context=True, aliases=['r', 'res'])
+async def resume(ctx):
+
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_paused():
+        print("продолжение")
+        voice.resume()
+        await ctx.send("Продолжаю воспроизведение")
+    else:
+        print("ERROR")
+        await ctx.send("ERROR")
 
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
