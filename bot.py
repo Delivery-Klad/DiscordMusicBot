@@ -12,10 +12,13 @@ bot = commands.Bot(command_prefix=BOT_PREFIX)
 @bot.event
 async def on_ready():
     print("Logged in as: " + bot.user.name + "\n")
+    game = discord.Game("поиск дома")
+    await bot.change_presence(activity=game)
 
 
 @bot.command(pass_context=True, aliases=['j', 'joi'])
 async def join(ctx):
+    """Подключиться к текущему голосовому каналу"""
     channel = ctx.message.author.voice.channel
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -29,6 +32,7 @@ async def join(ctx):
 
 @bot.command(pass_context=True, aliases=['l', 'lea'])
 async def leave(ctx):
+    """Отключиться от текущего голосового канала"""
     channel = ctx.message.author.voice.channel
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -43,7 +47,7 @@ async def leave(ctx):
         
 @bot.command(pass_context=True, aliases=['pa', 'pau'])
 async def pause(ctx):
-
+    """Приостановить воспроизведение"""
     voice = get(bot.voice_clients, guild=ctx.guild)
 
     if voice and voice.is_playing():
@@ -57,7 +61,7 @@ async def pause(ctx):
 
 @bot.command(pass_context=True, aliases=['r', 'res'])
 async def resume(ctx):
-
+    """Продолжить воспроизведение"""
     voice = get(bot.voice_clients, guild=ctx.guild)
 
     if voice and voice.is_paused():
@@ -71,6 +75,7 @@ async def resume(ctx):
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, url: str):
+    """Включить песню формат:(.play youtubeURL)"""
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
