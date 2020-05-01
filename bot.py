@@ -31,8 +31,8 @@ async def join(ctx):
         await ctx.send(f"Бот подключился к {channel}")
         print(f"Бот подключился к {channel}\n")
     except Exception as e:
-        await ctx.send(f"Пользователь не в голосовом канале {channel}")
-        print(f"Пользователь не в голосовом канале {channel}\n")
+        await ctx.send(f"Пользователь не в голосовом канале")
+        print(f"Пользователь не в голосовом канале\n")
 
 
 @bot.command(pass_context=True, aliases=['l', 'lea'])
