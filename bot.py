@@ -1,4 +1,5 @@
 import discord
+import shutil
 from discord.ext import commands
 from discord.utils import get
 import youtube_dl
@@ -71,11 +72,22 @@ async def resume(ctx):
     else:
         print("ERROR")
         await ctx.send("ERROR")
+        
+        
+@bot.command(pass_context=True, aliases=['v', 'vol'])
+async def volume(ctx, volume: int):
+    """Изменение громкости (.volume 50)"""
+    if ctx.voice_client is None:
+        return await ctx.send("Бот не находится в голосовом канале")
+
+    print(volume/100)
+    ctx.voice_client.source.volume = volume / 100
+    await ctx.send(f"Громкость: {volume}%")
 
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, url: str):
-    """Включить песню формат:(.play youtubeURL)"""
+    """Включить песню (.play youtubeURL)"""
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
