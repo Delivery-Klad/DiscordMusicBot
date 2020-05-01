@@ -4,7 +4,6 @@ from discord.utils import get
 import youtube_dl
 import os
 
-TOKEN = 'NjI4MjA4MzgyNzU0NDIyNzg0.XZJuUA.-BdO22-ECHYjBCPp4eoLh5OMKGk'
 BOT_PREFIX = '.'
 
 bot = commands.Bot(command_prefix=BOT_PREFIX)
@@ -82,4 +81,5 @@ async def play(ctx, url: str):
     await ctx.send(f"Сейчас проигрывается: {nname[0]}")
 
 
-bot.run(TOKEN)
+b_token = os.environ.get('TOKEN')
+bot.run(str(b_token))
