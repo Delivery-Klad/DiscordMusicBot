@@ -1,5 +1,7 @@
 # DiscordMusicBot (наконец-то нашел дом)
 
 Buildpacks:
-*https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest
-*https://github.com/xrisk/heroku-opus.git
+
+-https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest
+
+-https://github.com/xrisk/heroku-opus.git
