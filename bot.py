@@ -20,69 +20,86 @@ async def on_ready():
 @bot.command(pass_context=True, aliases=['j', 'joi'])
 async def join(ctx):
     """Подключиться к текущему голосовому каналу"""
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    try:
+        channel = ctx.message.author.voice.channel
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_connected():
-        return await voice.move_to(channel)
+        if voice and voice.is_connected():
+            return await voice.move_to(channel)
 
-    await channel.connect()
-    await ctx.send(f"Бот подключился к {channel}")
-    print(f"Бот подключился к {channel}\n")
+        await channel.connect()
+        await ctx.send(f"Бот подключился к {channel}")
+        print(f"Бот подключился к {channel}\n")
+    except Exception as e:
+        await ctx.send(f"Пользователь не в голосовом канале {channel}")
+        print(f"Пользователь не в голосовом канале {channel}\n")
 
 
 @bot.command(pass_context=True, aliases=['l', 'lea'])
 async def leave(ctx):
     """Отключиться от текущего голосового канала"""
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    try:
+        channel = ctx.message.author.voice.channel
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_connected():
-        await voice.disconnect()
-        print(f"Бот оключился от {channel}")
-        await ctx.send(f"Бот оключился от {channel}")
-    else:
+        if voice and voice.is_connected():
+            await voice.disconnect()
+            print(f"Бот оключился от {channel}")
+            await ctx.send(f"Бот оключился от {channel}")
+        else:
+            print("Бот не находится в голосовом канале")
+            await ctx.send("Бот не находится в голосовом канале")
+    except Exception as e:
         print("Бот не находится в голосовом канале")
         await ctx.send("Бот не находится в голосовом канале")
         
-        
+          
 @bot.command(pass_context=True, aliases=['pa', 'pau'])
 async def pause(ctx):
     """Приостановить воспроизведение"""
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    try:
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_playing():
-        print("Пауза")
-        voice.pause()
-        await ctx.send("пауза")
-    else:
-        print("нечего ставить на паузу")
-        await ctx.send("Нечего ставить на паузу")
+        if voice and voice.is_playing():
+            print("Пауза")
+            voice.pause()
+            await ctx.send("пауза")
+        else:
+            print("нечего ставить на паузу")
+            await ctx.send("Нечего ставить на паузу")
+    except Exception as e:
+        print('error')
 
 
 @bot.command(pass_context=True, aliases=['r', 'res'])
 async def resume(ctx):
     """Продолжить воспроизведение"""
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    try:
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_paused():
-        print("продолжение")
-        voice.resume()
-        await ctx.send("Продолжаю воспроизведение")
-    else:
-        print("ERROR")
-        await ctx.send("ERROR")
+        if voice and voice.is_paused():
+            print("продолжение")
+            voice.resume()
+            await ctx.send("Продолжаю воспроизведение")
+        else:
+            print("ERROR")
+            await ctx.send("ERROR")
+    except Exception as e:
+        print('error')
         
         
 @bot.command(pass_context=True, aliases=['v', 'vol'])
 async def volume(ctx, volume: int):
     """Изменение громкости (.volume 50)"""
-    if ctx.voice_client is None:
-        return await ctx.send("Бот не находится в голосовом канале")
+    try:
+        if ctx.voice_client is None:
+            return await ctx.send("Бот не находится в голосовом канале")
 
-    print(volume/100)
-    ctx.voice_client.source.volume = volume / 100
-    await ctx.send(f"Громкость: {volume}%")
+        print(volume/100)
+        ctx.voice_client.source.volume = volume / 100
+        await ctx.send(f"Громкость: {volume}%")
+    except Exception as e:
+        print('error')
 
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
@@ -213,6 +230,23 @@ async def queue(ctx, *url: str):
 
     await ctx.send("Добавление " + str(q_num) + " в очередь")
     print("Добавлено в очередь\n")
+    
+    
+@bot.command(pass_context=True, aliases=['n', 'nex'])
+async def next(ctx):
+    try:
+        voice = get(bot.voice_clients, guild=ctx.guild)
+
+        if voice and voice.is_playing():
+            print("Playing Next Song")
+            voice.stop()
+            await ctx.send("Next Song")
+        else:
+            print("Нечего воспроизводить")
+            await ctx.send("Список воспроизведения подошел к концу")
+    except Exception as e:
+        print("Нечего воспроизводить")
+        await ctx.send("Список воспроизведения подошел к концу")
 
 
 b_token = os.environ.get('TOKEN')
