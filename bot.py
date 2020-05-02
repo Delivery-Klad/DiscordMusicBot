@@ -278,7 +278,7 @@ async def next(ctx):
             await ctx.send("Список воспроизведения подошел к концу")
     except Exception as e:
         print("Нечего воспроизводить")
-        await ctx.send("Список воспроизведения подошел к концу")
+        await ctx.send("Список воспроизведения подошел к концу ")
 
 
 b_token = os.environ.get('TOKEN')
