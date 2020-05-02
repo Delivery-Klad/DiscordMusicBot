@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord.utils import get
 import youtube_dl
 import os
+from os import system
 
 BOT_PREFIX = '.'
 
