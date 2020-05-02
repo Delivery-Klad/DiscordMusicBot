@@ -191,6 +191,28 @@ async def play(ctx, url: str):
     voice.source.volume = 0.07
     
     
+@bot.command(pass_context=True, aliases=['s', 'sto'])
+async def stop(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    queues.clear()
+
+    queue_infile = os.path.isdir("./Queue")
+    if queue_infile is True:
+        shutil.rmtree("./Queue")
+
+    if voice and voice.is_playing():
+        print("становлено")
+        voice.stop()
+        await ctx.send("ВОспроизведение остановлено")
+    else:
+        print("Нечего останавливать")
+        await ctx.send("Плейлист пуст")
+    
+    
+queues = {}
+    
+    
 @bot.command(pass_context=True, aliases=['q', 'que'])
 async def queue(ctx, *url: str):
     Queue_infile = os.path.isdir("./Queue")
