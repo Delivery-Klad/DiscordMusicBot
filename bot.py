@@ -106,7 +106,7 @@ async def volume(ctx, volume: int):
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, url: str):
 
-    await ctx.send(f"Начинаю загрузку {channel}")
+    await ctx.send(f"Начинаю загрузку")
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
