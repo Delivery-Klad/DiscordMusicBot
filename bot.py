@@ -9,6 +9,8 @@ from os import system
 BOT_PREFIX = '.'
 
 bot = commands.Bot(command_prefix=BOT_PREFIX)
+playlist = []
+nowPlayingIndex = 0;
 
 
 @bot.event
@@ -105,112 +107,64 @@ async def volume(ctx, volume: int):
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, url: str):
-
-    await ctx.send(f"Начинаю загрузку")
-    song_there = os.path.isfile("song.mp3")
     try:
-        if song_there:
-            os.remove("song.mp3")
-            print("Removed old song file")
-    except PermissionError:
-        print("Trying to delete song file, but it's being played")
-        await ctx.send("Уже что-то играет")
-        return
+        playlist.append(url)
+        
+        if voice and voice.is_playing():
+            await ctx.send(f"Что-то играет")
+            return
+        await ctx.send(f"Начинаю загрузку")
+        song_there = os.path.isfile("song.mp3")
+        try:
+            if song_there:
+                os.remove("song.mp3")
+                print("Removed old song file")
+        except PermissionError:
+            print("Trying to delete song file, but it's being played")
+            await ctx.send("Уже что-то играет")
+            return
 
-    #await ctx.send("a")
+        #await ctx.send("a")
 
-    voice = get(bot.voice_clients, guild=ctx.guild)
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
 
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        print("Downloading audio now\n")
-        ydl.download([url])
-
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            name = file
-            print(f"Renamed File: {file}\n")
-            os.rename(file, "song.mp3")
-
-    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("Song done!"))
-    voice.source = discord.PCMVolumeTransformer(voice.source)
-    voice.source.volume = 0.07
-
-    nname = name.rsplit("-", 2)
-    await ctx.send(f"Проигрывется: {nname[0]}")
-    print("playing\n")
-    
-    
-@bot.command(pass_context=True, aliases=['s', 'sto'])
-async def stop(ctx):
-    voice = get(bot.voice_clients, guild=ctx.guild)
-
-    queues.clear()
-
-    queue_infile = os.path.isdir("./Queue")
-    if queue_infile is True:
-        shutil.rmtree("./Queue")
-
-    if voice and voice.is_playing():
-        print("становлено")
-        voice.stop()
-        await ctx.send("ВОспроизведение остановлено")
-    else:
-        print("Нечего останавливать")
-        await ctx.send("Плейлист пуст")
-    
-    
-queues = {}
-    
-    
-@bot.command(pass_context=True, aliases=['q', 'que'])
-async def queue(ctx, *url: str):
-    Queue_infile = os.path.isdir("./Queue")
-    if Queue_infile is False:
-        os.mkdir("Queue")
-    DIR = os.path.abspath(os.path.realpath("Queue"))
-    q_num = len(os.listdir(DIR))
-    q_num += 1
-    add_queue = True
-    while add_queue:
-        if q_num in queues:
-            q_num += 1
-        else:
-            add_queue = False
-            queues[q_num] = q_num
-
-    queue_path = os.path.abspath(os.path.realpath("Queue") + f"\song{q_num}.%(ext)s")
-
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'quiet': True,
-        'outtmpl': queue_path,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-
-    song_search = " ".join(url)
-    try:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([f"ytsearch1:{song_search}"])
-    except:
-        q_path = os.path.abspath(os.path.realpath("Queue"))
-        system(f"spotdl -ff song{q_num} -f " + '"' + q_path + '"' + " -s " + song_search)
+            print("Downloading audio now\n")
+            ydl.download([url])
 
-    await ctx.send("Добавление " + str(q_num) + " в очередь")
-    print("Добавлено в очередь\n")
+        for file in os.listdir("./"):
+            if file.endswith(".mp3"):
+                name = file
+                print(f"Renamed File: {file}\n")
+                os.rename(file, "song.mp3")
+        try:
+            voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: await play(ctx, playlist[nowPlayingIndex + 1]))
+        except Exception as e:
+            print('indexError')
+        voice.source = discord.PCMVolumeTransformer(voice.source)
+        voice.source.volume = ctx.voice_client.source.volume
+
+        nname = name.rsplit("-", 2)
+        await ctx.send(f"Проигрывется: {nname[0]}")
+        print("playing\n")
+    except Exception as e:
+        print('error')
     
+    
+@bot.command(pass_context=True, aliases=['c', 'cle'])
+async def clear(ctx):
+    playlist = []
+    nowPlayingIndex = 0
+ 
     
 @bot.command(pass_context=True, aliases=['n', 'nex'])
 async def next(ctx):
