@@ -105,91 +105,63 @@ async def volume(ctx, volume: int):
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, url: str):
-    """Включить песню (.play youtubeURL)"""
-    
-    def check_queue():
-        Queue_infile = os.path.isdir("./Queue")
-        if Queue_infile is True:
-            DIR = os.path.abspath(os.path.realpath("Queue"))
-            length = len(os.listdir(DIR))
-            still_q = length - 1
-            try:
-                first_file = os.listdir(DIR)[0]
-            except:
-                print("No more queued song(s)\n")
-                queues.clear()
-                return
-            main_location = os.path.dirname(os.path.realpath(__file__))
-            song_path = os.path.abspath(os.path.realpath("Queue") + "\\" + first_file)
-            if length != 0:
-                print("Song done, playing next queued\n")
-                print(f"Songs still in queue: {still_q}")
-                song_there = os.path.isfile("song.mp3")
-                if song_there:
-                    os.remove("song.mp3")
-                shutil.move(song_path, main_location)
-                for file in os.listdir("./"):
-                    if file.endswith(".mp3"):
-                        os.rename(file, 'song.mp3')
+    channel = ctx.message.author.voice.channel
+    voice = get(bot.voice_clients, guild=ctx.guild)
 
-                voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: check_queue())
-                voice.source = discord.PCMVolumeTransformer(voice.source)
-                voice.source.volume = 0.07
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
 
-            else:
-                queues.clear()
-                return
+    await voice.disconnect()
 
-        else:
-            queues.clear()
-            print("очередь пуста\n")
-    
-    
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        await channel.connect()
+        print(f"Бот подключился к {channel}\n")
+
+    await ctx.send(f"Бот подключился к {channel}")
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
             os.remove("song.mp3")
-            queues.clear()
+            print("Removed old song file")
     except PermissionError:
-        print("ERROR: Что-то играет")
-        await ctx.send("ERROR: Что-то играет")
+        print("Trying to delete song file, but it's being played")
+        await ctx.send("Уже что-то играет")
         return
-    
-    Queue_infile = os.path.isdir("./Queue")
-    try:
-        Queue_folder = "./Queue"
-        if Queue_infile is True:
-            shutil.rmtree(Queue_folder)
-    except:
-        print("error")
 
-    await ctx.send("Начинаю загрузку...")
+    #await ctx.send("a")
 
     voice = get(bot.voice_clients, guild=ctx.guild)
 
     ydl_opts = {
         'format': 'bestaudio/best',
-        'quiet': False,
-        'outtmpl': "./song.mp3",
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
     }
-    
-    song_search = " ".join(url)
 
-    try:
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([f"ytsearch1:{song_search}"])
-    except:
-        c_path = os.path.dirname(os.path.realpath(__file__))
-        system("spotdl -ff song -f " + '"' + c_path + '"' + " -s " + song_search)
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        print("Downloading audio now\n")
+        ydl.download([url])
 
-    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("выполнено"))
+    for file in os.listdir("./"):
+        if file.endswith(".mp3"):
+            name = file
+            print(f"Renamed File: {file}\n")
+            os.rename(file, "song.mp3")
+
+    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print("Song done!"))
     voice.source = discord.PCMVolumeTransformer(voice.source)
     voice.source.volume = 0.07
+
+    nname = name.rsplit("-", 2)
+    await ctx.send(f"Проигрывется: {nname[0]}")
+    print("playing\n")
     
     
 @bot.command(pass_context=True, aliases=['s', 'sto'])
