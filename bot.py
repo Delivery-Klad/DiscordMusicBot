@@ -147,7 +147,7 @@ async def play(ctx, url: str):
                 print(f"Renamed File: {file}\n")
                 os.rename(file, "song.mp3")
         try:
-            voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: await play(ctx, playlist[nowPlayingIndex + 1]))
+            voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: play(ctx, playlist[nowPlayingIndex + 1]))
         except Exception as e:
             print('indexError')
         voice.source = discord.PCMVolumeTransformer(voice.source)
