@@ -8,11 +8,7 @@ from os import system
 import asyncio
 
 BOT_PREFIX = '.'
-
 bot = commands.Bot(command_prefix=BOT_PREFIX)
-playlist = []
-nowPlayingIndex = 0
-nxt = False
 
 
 @bot.event
@@ -285,4 +281,5 @@ async def next(ctx):
         await ctx.send("Список воспроизведения подошел к концу")
 
 
-bot.run("NjI4MjA4MzgyNzU0NDIyNzg0.Xqu4Mw.6eNbYrHnwJlDZVJluEvxYQqhz8I")
+b_token = os.environ.get('TOKEN')
+bot.run(str(b_token))
