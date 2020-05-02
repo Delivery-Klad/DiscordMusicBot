@@ -105,23 +105,8 @@ async def volume(ctx, volume: int):
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, url: str):
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_connected():
-        await voice.move_to(channel)
-    else:
-        voice = await channel.connect()
-
-    await voice.disconnect()
-
-    if voice and voice.is_connected():
-        await voice.move_to(channel)
-    else:
-        await channel.connect()
-        print(f"Бот подключился к {channel}\n")
-
-    await ctx.send(f"Бот подключился к {channel}")
+    await ctx.send(f"Начинаю загрузку {channel}")
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
