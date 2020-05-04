@@ -96,8 +96,8 @@ async def volume(ctx, volume: int):
         if ctx.voice_client is None:
             return await ctx.send("Бот не находится в голосовом канале")
         if volume < 0:
-            await ctx.send(f"{ctx.author.mention}% Беда с башкой?")
-
+            await ctx.send(f"{ctx.author.mention} Беда с башкой?")
+            return
         print(volume / 100)
         ctx.voice_client.source.volume = volume / 100
         await ctx.send(f"Громкость: {volume}%")
