@@ -13,6 +13,11 @@ bot = commands.Bot(command_prefix=BOT_PREFIX)
 current_index = 1
 volumes = 15
 queues = []
+PlayLst = ['https://open.spotify.com/track/16e87FkBL4cbbUpLEgOBW6', 'https://open.spotify.com/track/6rSuL1ViLO7Aljn2WD09s4',
+          'https://open.spotify.com/track/0d8aJLKZI1r4uOSLZBJaBK', 'https://open.spotify.com/track/56sk7jBpZV0CD31G9hEU3b',
+          'https://open.spotify.com/track/4XxViTHM1CXeHEU7r2V02Q', 'https://open.spotify.com/track/6x5deYIe42rgRbStECDjYQ',
+          'https://open.spotify.com/track/2kRXBd2FB60vhtSPfkkyTc', 'https://open.spotify.com/track/2UREu1Y8CO4jXkbvqAtP7g',
+          'https://open.spotify.com/track/4mTPviBGRgjPxeaQFnBDW3', 'https://open.spotify.com/track/3f4nRpKiChStPlsA3nCwhJ']
 
 
 @bot.event
@@ -111,7 +116,7 @@ async def volume(ctx, vol: int):
         print('error')
 
 
-@bot.command(pass_context=True, aliases=['c', 'cle'])
+@bot.command(pass_context=True, aliases=['c', 'clr'])
 async def clear(ctx):
     """Очистить очередь воспроизведения"""
     global volumes
@@ -126,7 +131,12 @@ async def clear(ctx):
     else:
         print("Очередь пуста")
         await ctx.send("Очередь пуста")
-
+        
+        
+@bot.command(pass_context=True, aliases=['l', 'lst'])
+async def list(ctx):
+    """Запустить проигрывание плэйлиста"""
+    queues = PlayLst
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, *url: str):
