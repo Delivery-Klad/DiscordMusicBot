@@ -1,4 +1,4 @@
-# DiscordMusicBot (наконец-то нашел дом)
+# DiscordMusicBot (Heroku)
 
 Buildpacks:
 
