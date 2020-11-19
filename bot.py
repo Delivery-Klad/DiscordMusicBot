@@ -13,11 +13,8 @@ bot = commands.Bot(command_prefix=BOT_PREFIX)
 current_index = 1
 volumes = 15
 queues = []
-PlayLst = ['https://open.spotify.com/track/16e87FkBL4cbbUpLEgOBW6', 'https://open.spotify.com/track/6rSuL1ViLO7Aljn2WD09s4',
-          'https://open.spotify.com/track/0d8aJLKZI1r4uOSLZBJaBK', 'https://open.spotify.com/track/56sk7jBpZV0CD31G9hEU3b',
-          'https://open.spotify.com/track/4XxViTHM1CXeHEU7r2V02Q', 'https://open.spotify.com/track/6x5deYIe42rgRbStECDjYQ',
-          'https://open.spotify.com/track/2kRXBd2FB60vhtSPfkkyTc', 'https://open.spotify.com/track/2UREu1Y8CO4jXkbvqAtP7g',
-          'https://open.spotify.com/track/4mTPviBGRgjPxeaQFnBDW3', 'https://open.spotify.com/track/3f4nRpKiChStPlsA3nCwhJ']
+PlayLst = ['https://www.youtube.com/watch?v=yNC0p2RXeXM&list=LL&index=17', 'https://www.youtube.com/watch?v=_bVkFz4I4OA&list=LL&index=2',
+          'https://www.youtube.com/watch?v=eJxL7MQEZsk&list=LL&index=3']
 
 
 @bot.event
@@ -33,10 +30,8 @@ async def join(ctx):
     try:
         channel = ctx.message.author.voice.channel
         voice = get(bot.voice_clients, guild=ctx.guild)
-
         if voice and voice.is_connected():
             return await voice.move_to(channel)
-
         await channel.connect()
         await ctx.send(f"Бот подключился к {channel}")
         print(f"Бот подключился к {channel}\n")
@@ -86,7 +81,6 @@ async def resume(ctx):
     """Продолжить воспроизведение"""
     try:
         voice = get(bot.voice_clients, guild=ctx.guild)
-
         if voice and voice.is_paused():
             print("продолжение")
             voice.resume()
@@ -123,7 +117,6 @@ async def clear(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
     queues.clear()
     volumes = 15
-
     if voice and voice.is_playing():
         print("Очередь очищена")
         voice.stop()
