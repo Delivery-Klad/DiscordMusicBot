@@ -13,8 +13,7 @@ bot = commands.Bot(command_prefix=BOT_PREFIX)
 current_index = 1
 volumes = 15
 queues = []
-PlayLst = ['https://www.youtube.com/watch?v=yNC0p2RXeXM&list=LL&index=17', 'https://www.youtube.com/watch?v=_bVkFz4I4OA&list=LL&index=2',
-          'https://www.youtube.com/watch?v=eJxL7MQEZsk&list=LL&index=3']
+PlayLst = ['https://www.youtube.com/watch?v=yNC0p2RXeXM', 'https://www.youtube.com/watch?v=7tThYxp5kmk']
 
 
 @bot.event
