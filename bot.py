@@ -69,7 +69,7 @@ async def pause(ctx):
             voice.pause()
             await ctx.send("Воспроизведение приостановлено")
         else:
-            print("нечего ставить на паузу")
+            print("Нечего ставить на паузу")
             await ctx.send("Нечего ставить на паузу")
     except Exception as e:
         print('error')
@@ -81,7 +81,7 @@ async def resume(ctx):
     try:
         voice = get(bot.voice_clients, guild=ctx.guild)
         if voice and voice.is_paused():
-            print("продолжение")
+            print("Продолжение")
             voice.resume()
             await ctx.send("Продолжаю воспроизведение")
         else:
@@ -173,7 +173,7 @@ async def play(ctx, *url: str):
 
             try:
                 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                    print("загрузка\n")
+                    print("Загрузка\n")
                     ydl.download([f"ytsearch1:{song_search}"])
             except:
                 print("FALLBACK: youtube-dl does not support this URL, using Spotify (This is normal if Spotify URL)")
@@ -215,7 +215,7 @@ async def play(ctx, *url: str):
 
     try:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            print("загрузка\n")
+            print("Загрузка\n")
             ydl.download([f"ytsearch1:{song_search}"])
     except:
         print("FALLBACK: youtube-dl does not support this URL, using Spotify (This is normal if Spotify URL)")
