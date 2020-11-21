@@ -130,13 +130,8 @@ async def clear(ctx):
 async def list(ctx):
     """Запустить проигрывание плэйлиста"""
     queues = PlayLst
-          
-
-@bot.command(pass_context=True, aliases=['de', 'debu'])
-async def debug(ctx):
-    """Запустить проигрывание плэйлиста"""
-    await ctx.send(str(queues))          
-          
+    await ctx.send(str(queues)) 
+         
 
 @bot.command(pass_context=True, aliases=['p', 'pla'])
 async def play(ctx, *url: str):
