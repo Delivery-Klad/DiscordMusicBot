@@ -127,7 +127,7 @@ async def clear(ctx):
         
 @bot.command(pass_context=True, aliases=['li', 'lst'])
 async def list(ctx):
-    """Запустить проигрывание плэйлиста"""
+    """Запустить проигрывание плэйлиста (beta)"""
     for i in PlayLst:
         queues.append(i)
     await ctx.send(str(queues)) 
@@ -229,7 +229,7 @@ async def play(ctx, *url: str):
 
 @bot.command(pass_context=True, aliases=['q', 'que'])
 async def queue(ctx, *url: str):
-    """Добавление трека в очередь"""
+    """Добавление трека в очередь (URL или название)"""
     queues.append(url)
     print(queues)
     await ctx.send("Трек добвлен в очередь, его позиция: " + str(len(queues)))
