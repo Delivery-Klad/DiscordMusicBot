@@ -1,11 +1,11 @@
-# DiscordMusicBot
+# Discord Music Bot
 
 Heroku Buildpacks:
 ```
--https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest
--https://github.com/xrisk/heroku-opus.git
+1) https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest
+2) https://github.com/xrisk/heroku-opus.git
 ```
 Heroku variables:
 ```
-- TOKEN bot token
+1) TOKEN - bot token
 ```
