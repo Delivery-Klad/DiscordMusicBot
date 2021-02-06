@@ -1,6 +1,6 @@
-# DiscordMusicBot (Heroku)
+# DiscordMusicBot
 
-Buildpacks:
+Heroku Buildpacks:
 
 -https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest
 
