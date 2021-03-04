@@ -220,7 +220,7 @@ async def play(ctx, *url: str):
     except:
         print("FALLBACK: youtube-dl does not support this URL, using Spotify (This is normal if Spotify URL)")
         c_path = os.path.dirname(os.path.realpath(__file__))
-        system("spotdl -ff song -f " + '"' + c_path + '"' + " -s " + song_search)
+        system("spotdl" + song_search)
     queues.append(url)
     voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: check_queue())
     voice.source = discord.PCMVolumeTransformer(voice.source)
