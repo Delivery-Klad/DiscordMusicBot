@@ -1,23 +1,26 @@
 # Discord Music Bot
 
 ### Requirements:
-```
-1) discord==1.0.1
-2) discord.py==1.4.1
-3) discord.py[voice]
-4) youtube_dl==2021.3.3
-5) PyNaCl
-6) spotdl==3.1.4
-7) aiohttp==3.7.4
-8) websockets==6.0
-9) chardet==3.0.4
-```
+
+|Name             |Version |
+|-----------------|--------|
+|discord          |1.0.1   |
+|discord.py       |1.4.1   |
+|discord.py[voice]|None    |
+|youtube_dl       |2021.3.3|
+|PyNaCl           |1.4.0   |
+|spotdl           |3.1.4   |
+|aiohttp          |3.7.4   |
+|websockets       |6.0     |
+|chardet          |3.0.4   |
+
 ### Heroku Buildpacks:
-```
-1) https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest
-2) https://github.com/xrisk/heroku-opus.git
-```
+|Name       |Link                                                         |
+|-----------|-------------------------------------------------------------|
+|ffmpeg     |https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest|
+|heroku opus|https://github.com/xrisk/heroku-opus.git                     |
+
 ### Heroku variables:
-```
-1) TOKEN - bot token
-```
+|Name |Value    |
+|-----|---------|
+|TOKEN|bot token|
