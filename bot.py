@@ -115,7 +115,7 @@ async def skip(ctx):
 
     if voice and voice.is_playing():
         voice.stop()
-        await ctx.send("Трек пропущен")
+        await ctx.send("Трек пропущен, а ты попущен")
     else:
         await ctx.send("Нечего скипать")
 
