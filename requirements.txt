@@ -7,3 +7,4 @@ spotdl==3.3.1
 aiohttp==3.7.4
 websockets==6.0
 chardet==3.0.4
+toml
