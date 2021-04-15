@@ -1,33 +1,124 @@
 import discord
-import logging
-import sys
+import youtube_dl
+import os
 from discord.ext import commands
-from .cogs import music, error, meta, tips
-from . import config
+from discord.utils import get
+from discord import FFmpegPCMAudio
+from os import system
 
-cfg = config.load_config()
-
-bot = commands.Bot(command_prefix=cfg["prefix"])
+bot = commands.Bot(command_prefix='!')
 
 
 @bot.event
 async def on_ready():
-    logging.info(f"Logged in as {bot.user.name}")
+    print('Logged')
 
 
-COGS = [music.Music, error.CommandErrorHandler, meta.Meta, tips.Tips]
+@bot.command()
+async def falar(ctx, *, msg):
+    await ctx.channel.purge(limit=1)
+    await ctx.send(msg)
 
 
-def add_cogs(bot):
-    for cog in COGS:
-        bot.add_cog(cog(bot, cfg))  # Initialize the cog and add it to the bot
+@bot.command(pass_context=True, brief="Пригласить бота в канал", aliases=['j', 'jo', 'join'])
+async def join(ctx):
+    channel = ctx.message.author.voice.channel
+    if not channel:
+        await ctx.send("Вы должны быть в голосовом канале")
+        return
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice and voice.is_connected():
+        await voice.move_to(channel)
+    else:
+        voice = await channel.connect()
+    await ctx.send(f"Подключен к каналу: {channel}")
 
 
-def run():
-    add_cogs(bot)
-    if cfg["token"] == "":
-        raise ValueError(
-            "No token has been provided. Please ensure that config.toml contains the bot token."
-        )
-        sys.exit(1)
-    bot.run(cfg["token"])
+@bot.command(pass_context=True, brief="Отключить бота от канала", aliases=['l', 'le', 'lea'])
+async def leave(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    if voice and voice.is_connected():
+        await voice.disconnect()
+        await ctx.send("Бот отключен от канала")
+    else:
+        await ctx.send("Бот не подключен к голосовому каналу")
+
+
+@bot.command(pass_context=True, brief="Включить проигрывание 'play [url]'", aliases=['pl', 'p', 'play'])
+async def play(ctx, *, url: str):
+    song_there = os.path.isfile("song.mp3")
+    try:
+        if song_there:
+            os.remove("song.mp3")
+    except PermissionError:
+        await ctx.send("Подождите завершения песни или воспользуйтесь командой <skip>")
+        return
+    await ctx.send("А, ОЙ!")
+
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    ydl_opts = {
+        'default_search': 'ytsearch',
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+
+        }],
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        # r = ydl.extract_info(url ,download=False)
+        # r = ydl.extract_info(f"ytsearch:'{url}'", download=False)
+        ydl.download([url])
+
+        # print(str(url))
+        # title = r["title"]
+        # print(title)
+
+    for file in os.listdir("./"):
+        if file.endswith(".mp3"):
+            os.rename(file, 'song.mp3')
+    voice.play(discord.FFmpegPCMAudio("song.mp3"))
+    voice.volume = 100
+    voice.is_playing()
+    await ctx.send(f"..")
+
+
+@bot.command(pass_context=True, aliases=['pa', 'pau', 'pause'])
+async def pause(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_playing():
+        print("Music paused")
+        voice.pause()
+        await ctx.send("Проигрывание приостановлено")
+    else:
+        await ctx.send("В данный момент ничего не проигрывается")
+
+
+@bot.command(pass_context=True, aliases=['r', 'res', 'resume'])
+async def resume(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_paused():
+        print("Resumed music")
+        voice.resume()
+        await ctx.send("Воспроизведение продолжено")
+    else:
+        await ctx.send("В данный момент нет приостановленного трека")
+
+
+@bot.command(pass_context=True, aliases=['s', 'ski'])
+async def skip(ctx):
+    voice = get(bot.voice_clients, guild=ctx.guild)
+
+    if voice and voice.is_playing():
+        voice.stop()
+        await ctx.send("Трек пропущен")
+    else:
+        await ctx.send("Нечего скипать")
+
+
+b_token = os.environ.get('TOKEN')
+bot.run(str(b_token))
