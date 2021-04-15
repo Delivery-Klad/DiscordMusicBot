@@ -20,7 +20,7 @@ async def falar(ctx, *, msg):
     await ctx.send(msg)
 
 
-@bot.command(pass_context=True, brief="Пригласить бота в канал", aliases=['j', 'jo', 'join'])
+@bot.command(pass_context=True, brief="Пригласить бота в канал", aliases=['jo', 'joi'])
 async def join(ctx):
     channel = ctx.message.author.voice.channel
     if not channel:
@@ -34,7 +34,7 @@ async def join(ctx):
     await ctx.send(f"Подключен к каналу: {channel}")
 
 
-@bot.command(pass_context=True, brief="Отключить бота от канала", aliases=['l', 'le', 'lea'])
+@bot.command(pass_context=True, brief="Отключить бота от канала", aliases=['le', 'lea'])
 async def leave(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
     if voice and voice.is_connected():
@@ -44,7 +44,7 @@ async def leave(ctx):
         await ctx.send("Бот не подключен к голосовому каналу")
 
 
-@bot.command(pass_context=True, brief="Включить проигрывание 'play [url]'", aliases=['pl', 'p', 'play'])
+@bot.command(pass_context=True, brief="Включить проигрывание 'play [url]'", aliases=['pl', 'pla'])
 async def play(ctx, *, url: str):
     song_there = os.path.isfile("song.mp3")
     try:
@@ -85,7 +85,7 @@ async def play(ctx, *, url: str):
     await ctx.send(f"..")
 
 
-@bot.command(pass_context=True, aliases=['pa', 'pau', 'pause'])
+@bot.command(pass_context=True, aliases=['pa', 'pau'])
 async def pause(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -97,7 +97,7 @@ async def pause(ctx):
         await ctx.send("В данный момент ничего не проигрывается")
 
 
-@bot.command(pass_context=True, aliases=['r', 'res', 'resume'])
+@bot.command(pass_context=True, aliases=['r', 'res'])
 async def resume(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -109,7 +109,7 @@ async def resume(ctx):
         await ctx.send("В данный момент нет приостановленного трека")
 
 
-@bot.command(pass_context=True, aliases=['s', 'ski'])
+@bot.command(pass_context=True, aliases=['sk', 'ski'])
 async def skip(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
 
