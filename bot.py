@@ -18,11 +18,17 @@ async def on_ready():
 
 
 @bot.command(brief="Изменить громкость", aliases=['vol'])
-async def volume(ctx, count):
+async def volume(ctx, count: int):
     global vol
-    voice = get(bot.voice_clients, guild=ctx.guild)
-    voice.volume = vol
-    vol = count if count <= 100 else await ctx.send("Ты че, шизоид?")
+    if ctx.voice_client is None:
+        return await ctx.send("Бот не находится в голосовом канале")
+    if count < 0 or count > 200:
+        await ctx.send(f"{ctx.author.mention} Беда с башкой?")
+        return
+    print(vol / 100)
+    ctx.voice_client.source.volume = vol / 100
+    await ctx.send(f"Громкость: {vol}%")
+    vol = count
 
 
 @bot.command(pass_context=True, brief="Пригласить бота в канал", aliases=['jo', 'joi'])
@@ -75,9 +81,7 @@ async def play(ctx, *, url: str):
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
-
         print(str(url))
-
     for file in os.listdir("./"):
         if file.endswith(".mp3"):
             os.rename(file, 'song.mp3')
