@@ -6,7 +6,7 @@ from discord.utils import get
 from discord import FFmpegPCMAudio
 from os import system
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='.')
 
 
 @bot.event
@@ -51,9 +51,9 @@ async def play(ctx, *, url: str):
         if song_there:
             os.remove("song.mp3")
     except PermissionError:
-        await ctx.send("Подождите завершения песни или воспользуйтесь командой <skip>")
+        await ctx.send("А, ОЙ! Ошиб04ка")
         return
-    await ctx.send("А, ОЙ!")
+    await ctx.send("Подождите завершения песни или воспользуйтесь командой <skip>")
 
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -73,8 +73,8 @@ async def play(ctx, *, url: str):
         ydl.download([url])
 
         # print(str(url))
-        # title = r["title"]
-        # print(title)
+        title = r["title"]
+        print(title)
 
     for file in os.listdir("./"):
         if file.endswith(".mp3"):
@@ -82,7 +82,7 @@ async def play(ctx, *, url: str):
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
     voice.volume = 100
     voice.is_playing()
-    await ctx.send(f"..")
+    await ctx.send(f"Проигрывается: " + title)
 
 
 @bot.command(pass_context=True, aliases=['pa', 'pau'])
