@@ -74,15 +74,9 @@ async def play(ctx, *, url: str):
         }],
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        r = ydl.extract_info(url, download=False)
-        print(r)
-        r = ydl.extract_info(f"ytsearch:'{url}'", download=False)
-        print(r)
         ydl.download([url])
 
         print(str(url))
-        title = r["title"]
-        print(title)
 
     for file in os.listdir("./"):
         if file.endswith(".mp3"):
@@ -90,7 +84,7 @@ async def play(ctx, *, url: str):
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
     voice.volume = vol
     voice.is_playing()
-    await ctx.send(f"Проигрывается: " + title)
+    await ctx.send(f"Проигрывание запущено")
 
 
 @bot.command(pass_context=True, brief="Поставить проигрывание на паузу", aliases=['pa', 'pau'])
