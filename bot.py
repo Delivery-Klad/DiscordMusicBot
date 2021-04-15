@@ -25,9 +25,9 @@ async def volume(ctx, count: int):
     if count < 0 or count > 200:
         await ctx.send(f"{ctx.author.mention} Беда с башкой?")
         return
-    print(vol / 100)
-    ctx.voice_client.source.volume = vol / 100
-    await ctx.send(f"Громкость: {vol}%")
+    print(count / 100)
+    ctx.voice_client.source.volume = count / 100
+    await ctx.send(f"Громкость: {count}%")
     vol = count
 
 
