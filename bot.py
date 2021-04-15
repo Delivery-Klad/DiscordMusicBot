@@ -15,7 +15,7 @@ async def on_ready():
 
 
 @bot.command()
-async def falar(ctx, *, msg):
+async def say(ctx, *, msg):
     await ctx.channel.purge(limit=1)
     await ctx.send(msg)
 
