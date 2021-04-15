@@ -33,8 +33,9 @@ async def volume(ctx, count: int):
 
 @bot.command(pass_context=True, brief="Пригласить бота в канал", aliases=['jo', 'joi'])
 async def join(ctx):
-    channel = ctx.message.author.voice.channel
-    if not channel:
+    try:
+        channel = ctx.message.author.voice.channel
+    except AttributeError:
         await ctx.send("Вы должны быть в голосовом канале")
         return
     voice = get(bot.voice_clients, guild=ctx.guild)
@@ -68,6 +69,10 @@ async def play(ctx, *, url: str):
     await ctx.send("Loading...")
 
     voice = get(bot.voice_clients, guild=ctx.guild)
+    if not voice:
+        coroutine = join()
+        coroutine.send(ctx)
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
     ydl_opts = {
         'default_search': 'ytsearch',
