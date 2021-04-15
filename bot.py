@@ -7,17 +7,22 @@ from discord import FFmpegPCMAudio
 from os import system
 
 bot = commands.Bot(command_prefix='.')
+vol = 100
 
 
 @bot.event
 async def on_ready():
-    print('Logged')
+    print("Logged in as: " + bot.user.name + "\n")
+    game = discord.Game("поиск дома")
+    await bot.change_presence(activity=game)
 
 
-@bot.command()
-async def say(ctx, *, msg):
-    await ctx.channel.purge(limit=1)
-    await ctx.send(msg)
+@bot.command(brief="Изменить громкость", aliases=['vol'])
+async def volume(ctx, count):
+    global vol
+    voice = get(bot.voice_clients, guild=ctx.guild)
+    voice.volume = vol
+    vol = count if count <= 100 else await ctx.send("Ты че, шизоид?")
 
 
 @bot.command(pass_context=True, brief="Пригласить бота в канал", aliases=['jo', 'joi'])
@@ -46,14 +51,15 @@ async def leave(ctx):
 
 @bot.command(pass_context=True, brief="Включить проигрывание 'play [url]'", aliases=['pl', 'pla'])
 async def play(ctx, *, url: str):
+    global vol
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
             os.remove("song.mp3")
     except PermissionError:
-        await ctx.send("А, ОЙ! Ошиб04ка")
+        await ctx.send("Подождите завершения песни или воспользуйтесь командой <skip>")
         return
-    await ctx.send("Подождите завершения песни или воспользуйтесь командой <skip>")
+    await ctx.send("Loading...")
 
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -68,11 +74,13 @@ async def play(ctx, *, url: str):
         }],
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        # r = ydl.extract_info(url ,download=False)
-        # r = ydl.extract_info(f"ytsearch:'{url}'", download=False)
+        r = ydl.extract_info(url, download=False)
+        print(r)
+        r = ydl.extract_info(f"ytsearch:'{url}'", download=False)
+        print(r)
         ydl.download([url])
 
-        # print(str(url))
+        print(str(url))
         title = r["title"]
         print(title)
 
@@ -80,12 +88,12 @@ async def play(ctx, *, url: str):
         if file.endswith(".mp3"):
             os.rename(file, 'song.mp3')
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
-    voice.volume = 100
+    voice.volume = vol
     voice.is_playing()
     await ctx.send(f"Проигрывается: " + title)
 
 
-@bot.command(pass_context=True, aliases=['pa', 'pau'])
+@bot.command(pass_context=True, brief="Поставить проигрывание на паузу", aliases=['pa', 'pau'])
 async def pause(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -97,7 +105,7 @@ async def pause(ctx):
         await ctx.send("В данный момент ничего не проигрывается")
 
 
-@bot.command(pass_context=True, aliases=['r', 'res'])
+@bot.command(pass_context=True, brief="Продолжить воспроизведение", aliases=['r', 'res'])
 async def resume(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -109,7 +117,7 @@ async def resume(ctx):
         await ctx.send("В данный момент нет приостановленного трека")
 
 
-@bot.command(pass_context=True, aliases=['sk', 'ski'])
+@bot.command(pass_context=True, brief="Скипнуть трек", aliases=['sk', 'ski'])
 async def skip(ctx):
     voice = get(bot.voice_clients, guild=ctx.guild)
 
