@@ -128,6 +128,11 @@ async def skip(ctx):
         await ctx.send("Трек пропущен, а ты попущен")
     else:
         await ctx.send("Нечего скипать")
+        
+        
+@bot.event
+async def on_message(msg)
+    print(msg.content)
 
 
 b_token = os.environ.get('TOKEN')
