@@ -131,7 +131,7 @@ async def skip(ctx):
         
         
 @bot.event
-async def on_message(msg)
+async def on_message(msg):
     print(msg.content)
 
 
