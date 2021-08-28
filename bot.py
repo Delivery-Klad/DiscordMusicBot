@@ -28,7 +28,10 @@ async def volume(ctx, count: int):
         await ctx.send(f"{ctx.author.mention} Беда с башкой?")
         return
     temp = get(bot.voice_clients, guild=ctx.guild)
-    temp.volume = count
+    local_source = PCMVolumeTransformer(temp.source)
+    print(local_source.volume)
+    local_source.volume = count
+    print(local_source.volume)
     await ctx.send(f"Громкость: {count}%")
     vol = count
 
@@ -98,7 +101,10 @@ async def play(ctx, *, url: str):
         if file.endswith(".mp3"):
             os.rename(file, 'song.mp3')
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
-    voice.volume = vol
+    local_source = PCMVolumeTransformer(voice.source)
+    print(local_source.volume)
+    local_source.volume = vol
+    print(local_source.volume)
     voice.is_playing()
     await ctx.send(f"Проигрывание запущено")
 
