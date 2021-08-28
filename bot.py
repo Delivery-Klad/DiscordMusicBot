@@ -9,6 +9,7 @@ from os import system
 
 bot = commands.Bot(command_prefix='.')
 vol = 100
+voice = None
 
 
 @bot.event
@@ -20,19 +21,20 @@ async def on_ready():
 
 @bot.command(brief="Изменить громкость", aliases=['vol'])
 async def volume(ctx, count: int):
-    global vol
+    global vol, voice
     if ctx.voice_client is None:
         return await ctx.send("Бот не находится в голосовом канале")
     if count < 0 or count > 200:
         await ctx.send(f"{ctx.author.mention} Беда с башкой?")
         return
-    PCMVolumeTransformer(ctx.author.voice.channel.source, count / 100)
+    ctx.voice_client.source.volume = count / 100
     await ctx.send(f"Громкость: {count}%")
     vol = count
 
 
 @bot.command(pass_context=True, brief="Пригласить бота в канал", aliases=['jo', 'joi'])
 async def join(ctx):
+    global voice
     try:
         channel = ctx.message.author.voice.channel
     except AttributeError:
@@ -48,6 +50,7 @@ async def join(ctx):
 
 @bot.command(pass_context=True, brief="Отключить бота от канала", aliases=['le', 'lea'])
 async def leave(ctx):
+    global voice
     voice = get(bot.voice_clients, guild=ctx.guild)
     if voice and voice.is_connected():
         await voice.disconnect()
@@ -58,7 +61,7 @@ async def leave(ctx):
 
 @bot.command(pass_context=True, brief="Включить проигрывание 'play [url]'", aliases=['pl', 'pla'])
 async def play(ctx, *, url: str):
-    global vol
+    global vol, voice
     song_there = os.path.isfile("song.mp3")
     try:
         if song_there:
