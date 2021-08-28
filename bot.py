@@ -1,6 +1,7 @@
 import discord
 import youtube_dl
 import os
+from discord import PCMVolumeTransformer
 from discord.ext import commands
 from discord.utils import get
 from discord import FFmpegPCMAudio
@@ -25,7 +26,7 @@ async def volume(ctx, count: int):
     if count < 0 or count > 200:
         await ctx.send(f"{ctx.author.mention} Беда с башкой?")
         return
-    ctx.voice_client.source.volume = count/100
+    PCMVolumeTransformer(ctx.author.voice.channel.source, count / 100)
     await ctx.send(f"Громкость: {count}%")
     vol = count
 
