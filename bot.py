@@ -27,6 +27,9 @@ async def volume(ctx, count: int):
     if count < 0 or count > 200:
         await ctx.send(f"{ctx.author.mention} Беда с башкой?")
         return
+    temp = get(bot.voice_clients, guild=ctx.guild)
+    print(temp.volume)
+    temp.set_volume(count / 100)
     ctx.voice_client.source.volume = count / 100
     await ctx.send(f"Громкость: {count}%")
     vol = count
