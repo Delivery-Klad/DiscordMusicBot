@@ -72,6 +72,7 @@ async def play(ctx, *, url: str):
     if not voice:
         await ctx.send("Не в голосовом канале")
         return
+    print(url)
     if "spotify" in url:
         os.system(f"spotdl {url}")
     else:
@@ -89,6 +90,7 @@ async def play(ctx, *, url: str):
             ydl.download([url])
             print(str(url))
     for file in os.listdir("./"):
+        print(file)
         if file.endswith(".mp3"):
             os.rename(file, 'song.mp3')
     voice.play(discord.FFmpegPCMAudio("song.mp3"))
