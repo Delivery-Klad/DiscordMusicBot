@@ -72,20 +72,22 @@ async def play(ctx, *, url: str):
     if not voice:
         await ctx.send("Не в голосовом канале")
         return
+    if "spotify" in url:
+        os.system(f"spotdl {url}")
+    else:
+        ydl_opts = {
+            'default_search': 'ytsearch',
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
 
-    ydl_opts = {
-        'default_search': 'ytsearch',
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-
-        }],
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
-        print(str(url))
+            }],
+        }
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+            print(str(url))
     for file in os.listdir("./"):
         if file.endswith(".mp3"):
             os.rename(file, 'song.mp3')
