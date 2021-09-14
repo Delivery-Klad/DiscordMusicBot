@@ -32,7 +32,7 @@ async def join(ctx):
     if voice and voice.is_connected():
         await voice.move_to(channel)
     else:
-        voice = await channel.connect()
+        await channel.connect()
     await ctx.send(f"Подключен к каналу: {channel}")
 
 
@@ -63,6 +63,8 @@ async def play(ctx, *, url: str):
         await ctx.send("Не в голосовом канале")
         return
     print(url)
+    if "spotify" in url and "playlist" in url:
+        pass
     if "spotify" in url:
         os.system(f"spotdl {url}")
     else:
